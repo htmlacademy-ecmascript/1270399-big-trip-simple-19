@@ -14,7 +14,7 @@ export default class TripPresenter {
   }
 
   init() {
-    this.listPoints = [...this.pointsModel.getPoints()]
+    this.listPoints = [...this.pointsModel.getPoints()];
 
     render(new SortView(), this.pointListContainer);
     render(this.pointListComponent, this.pointListContainer);

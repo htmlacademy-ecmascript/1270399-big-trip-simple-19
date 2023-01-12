@@ -11,17 +11,17 @@ function createFormEditTemplate(point) {
   const tripDateFrom = humanizePointDueFullDate(dateFrom);
   const tripDateTo = humanizePointDueFullDate(dateTo);
 
-const tripTypeTemplate = mockOffers.map((item) =>
-`<div class="event__type-item">
+  const tripTypeTemplate = mockOffers.map((item) =>
+    `<div class="event__type-item">
   <input id="event-type-${item.type}-${item.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}">
   <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${item.id}">${item.type}</label>
 </div>`).join('');
 
-const destantionTemplate = mockDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
+  const destantionTemplate = mockDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
-const offersTemplate = pointTypeOffer.offers
-.map((offer) =>
-  `<div class="event__offer-selector">
+  const offersTemplate = pointTypeOffer.offers
+    .map((offer) =>
+      `<div class="event__offer-selector">
     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-${offer.id}" type="checkbox" name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''}>
     <label class="event__offer-label" for="event-offer-${offer.type}-${offer.id}">
       <span class="event__offer-title">${offer.title}</span>
@@ -30,8 +30,8 @@ const offersTemplate = pointTypeOffer.offers
     </label>
   </div>`).join('');
 
-return (
-  `<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -90,8 +90,8 @@ return (
       </section>
     </form>
   </li>`
-);
-};
+  );
+}
 
 export default class EditFormView {
   constructor(point) {

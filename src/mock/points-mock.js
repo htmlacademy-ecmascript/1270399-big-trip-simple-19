@@ -50,129 +50,129 @@ const mockDestinations = [
 ];
 
 const mockOffers = [
-    {
-        type: 'taxi',
-        offers: [
-          {
-            id: 1,
-            title: 'Upgrade to a business class',
-            price: 120
-          },
-          {
-            id: 2,
-            title: 'Add luggage',
-            price: 30
-          },
-        ]
-    },
-    {
-        type: 'bus',
-        offers: [
-          {
-            id: 1,
-            title: 'Upgrade to a business class',
-            price: 120
-          },
-          {
-            id: 2,
-            title: 'Add luggage',
-            price: 30
-          }
-        ]
-    },
-    {
-        type: 'ship',
-        offers: [
-          {
-            id: 1,
-            title: 'Upgrade to a business class',
-            price: 120
-          },
-          {
-            id: 2,
-            title: 'Add luggage',
-            price: 30
-          },
-          {
-            id: 3,
-            title: 'Add meal',
-            price: 15
-          }
-        ]
-    },
-    {
-        type: 'drive',
-        offers: [
-          {
-            id: 1,
-            title: 'Upgrade to a business class',
-            price: 120
-          }
-        ]
-    },
-    {
-        type: 'flight',
-        offers: [
-          {
-            id: 1,
-            title: 'Upgrade to a business class',
-            price: 120
-          },
-          {
-            id: 2,
-            title: 'Add luggage',
-            price: 30
-          },
-          {
-            id: 3,
-            title: 'Add meal',
-            price: 15
-          }
-        ]
-    }
+  {
+    type: 'taxi',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+    ]
+  },
+  {
+    type: 'bus',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      }
+    ]
+  },
+  {
+    type: 'ship',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+      {
+        id: 3,
+        title: 'Add meal',
+        price: 15
+      }
+    ]
+  },
+  {
+    type: 'drive',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      }
+    ]
+  },
+  {
+    type: 'flight',
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+      {
+        id: 3,
+        title: 'Add meal',
+        price: 15
+      }
+    ]
+  }
 ];
 
 const mockPoints = [
-    {
-        basePrice: 100,
-        dateFrom: '2019-07-10T22:55:56.845Z',
-        dateTo: '2019-07-11T11:22:13.375Z',
-        destination: 1,
-        id: '0',
-        offers: [1, 2],
-        type: 'bus'
-    },
-    {
-        basePrice: 50,
-        dateFrom: '2019-07-10T22:55:56.845Z',
-        dateTo: '2019-07-11T11:22:13.375Z',
-        destination: 2,
-        id: '1',
-        offers: [1],
-        type: 'taxi'
-    },
-    {
-        basePrice: 1100,
-        dateFrom: '2019-07-10T22:55:56.845Z',
-        dateTo: '2019-07-11T11:22:13.375Z',
-        destination: 3,
-        id: '2',
-        offers: [1, 2, 3],
-        type: 'flight'
-    },
-    {
-        basePrice: 500,
-        dateFrom: '2019-07-10T22:55:56.845Z',
-        dateTo: '2019-07-11T11:22:13.375Z',
-        destination: 4,
-        id: '3',
-        offers: [1, 2],
-        type: 'ship'
-    }
+  {
+    basePrice: 100,
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-07-11T11:22:13.375Z',
+    destination: 1,
+    id: '0',
+    offers: [1, 2],
+    type: 'bus'
+  },
+  {
+    basePrice: 50,
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-07-11T11:22:13.375Z',
+    destination: 2,
+    id: '1',
+    offers: [1],
+    type: 'taxi'
+  },
+  {
+    basePrice: 1100,
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-07-11T11:22:13.375Z',
+    destination: 3,
+    id: '2',
+    offers: [1, 2, 3],
+    type: 'flight'
+  },
+  {
+    basePrice: 500,
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-07-11T11:22:13.375Z',
+    destination: 4,
+    id: '3',
+    offers: [1, 2],
+    type: 'ship'
+  }
 ];
 
 function getRandomPoint() {
-  return getRandomArrayElement(mockPoints)
+  return getRandomArrayElement(mockPoints);
 }
 
 export {mockDestinations, mockOffers, mockPoints, getRandomPoint};
