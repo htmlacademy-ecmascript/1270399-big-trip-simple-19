@@ -4,6 +4,7 @@ import EditFormView from '../view/edit-form-view.js';
 import PointView from '../view/point-view.js';
 import PointListView from '../view/point-list-view.js';
 import SortView from '../view/sort-view.js';
+import NoPointView from '../view/no-points-view.js';
 
 
 export default class TripPresenter {
@@ -22,14 +23,17 @@ export default class TripPresenter {
   init() {
     this.#listPoints = [...this.#pointsModel.points];
 
-    render(new SortView(), this.#pointListContainer);
-    render(this.#pointListComponent, this.#pointListContainer);
-    render(new FormCreationView(), this.#pointListComponent.element);
+    if (this.#listPoints.length === 0) {
+      render(new NoPointView(), this.#pointListContainer);
+    } else {
+      render(new SortView(), this.#pointListContainer);
+      render(this.#pointListComponent, this.#pointListContainer);
+      render(new FormCreationView(), this.#pointListComponent.element);
 
-    for (let i = 0; i < this.#listPoints.length; i++) {
-      this.#renderPoint(this.#listPoints[i]);
+      for (let i = 0; i < this.#listPoints.length; i++) {
+        this.#renderPoint(this.#listPoints[i]);
+      }
     }
-
   }
 
   #renderPoint(point) {
