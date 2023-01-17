@@ -31,7 +31,7 @@ export default class TripPresenter {
     }
 
   }
-  
+
   #renderPoint(point) {
     const pointComponent = new PointView({point});
     const pointEditComponent = new EditFormView({point});
