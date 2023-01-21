@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {mockDestinations, mockOffers} from '../mock/points-mock.js';
 import {humanizePointDueFullDate} from '../utils.js';
 
@@ -93,27 +93,31 @@ function createFormEditTemplate(point) {
   );
 }
 
-export default class EditFormView {
-  #element = null;
+export default class EditFormView extends AbstractView {
+  #handleFormSubmit = null;
   #point = null;
+  handleFormClose = null;
 
-  constructor({point}) {
+  constructor({point, onFormSubmit, onFormClose}) {
+    super();
     this.#point = point;
+    this.#handleFormSubmit = onFormSubmit;
+    this.handleFormClose = onFormClose;
+
+    this.element.querySelector('form').addEventListener('submit', this. #formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormClose);
   }
 
   get template() {
     return createFormEditTemplate(this.#point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #handleFormClose = () => {
+    this.handleFormClose();
+  };
 }
