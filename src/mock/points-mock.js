@@ -153,8 +153,8 @@ const mockPoints = [
   },
   {
     basePrice: 1100,
-    dateFrom: '2019-07-10T22:55:56.845Z',
-    dateTo: '2019-07-11T11:22:13.375Z',
+    dateFrom: '2023-01-24T22:55:56.845Z',
+    dateTo: '2023-01-27T11:22:13.375Z',
     destination: 3,
     id: '2',
     offers: [1, 2, 3],
@@ -162,8 +162,8 @@ const mockPoints = [
   },
   {
     basePrice: 500,
-    dateFrom: '2019-07-10T22:55:56.845Z',
-    dateTo: '2019-07-11T11:22:13.375Z',
+    dateFrom: '2023-07-24T22:55:56.845Z',
+    dateTo: '2023-07-27T11:22:13.375Z',
     destination: 4,
     id: '3',
     offers: [1, 2],

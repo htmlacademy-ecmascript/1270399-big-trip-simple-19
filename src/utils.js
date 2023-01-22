@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {FilterType} from './const.js';
 
 const TIME_FORNAT = 'HH:mm';
 const DATE_FORMAT = 'MMM DD';
@@ -24,5 +25,14 @@ function getRandomNumber(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate};
+function isPointFuture(dateFrom) {
+  return dateFrom && (dayjs().isSame(dateFrom, 'D') || dayjs().isBefore(dateFrom, 'D'));
+}
+
+const filter = {
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.dateFrom)),
+};
+
+export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter};
 
