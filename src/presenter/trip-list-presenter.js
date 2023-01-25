@@ -25,7 +25,7 @@ export default class TripListPresenter {
     this.#listPoints = [...this.#pointsModel.points];
 
     render(new SortView(), this.#pointListContainer);
-    
+
 
     if (this.#listPoints.length === 0) {
       render(new NoPointView(), this.#pointListContainer);
