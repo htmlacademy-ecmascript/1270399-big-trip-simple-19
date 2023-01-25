@@ -34,5 +34,9 @@ const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.dateFrom)),
 };
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter};
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, updateItem};
 
