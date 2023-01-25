@@ -57,7 +57,7 @@ function createPointViewTemplate(point) {
   );
 }
 
-export default class PointListView extends AbstractView {
+export default class PointView extends AbstractView {
   #handleRollupClick = null;
   #point = null;
 
