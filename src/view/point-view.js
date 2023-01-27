@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {mockDestinations, mockOffers} from '../mock/points-mock.js';
-import {humanizePointDueTime, humanizePointDueDate} from '../utils.js';
+import {humanizePointDueTime, humanizePointDueDate} from '../utils/utils.js';
 
 function createPointViewTemplate(point) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = point;

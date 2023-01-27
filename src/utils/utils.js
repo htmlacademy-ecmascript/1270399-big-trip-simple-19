@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {FilterType} from './const.js';
+import {FilterType} from '../const.js';
 
 const TIME_FORNAT = 'HH:mm';
 const DATE_FORMAT = 'MMM DD';
@@ -38,5 +38,33 @@ function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, updateItem};
+function getWeightForNullValue(valueA, valueB) {
+  if (valueA === null && valueB === null) {
+    return 0;
+  }
+
+  if (valueA === null) {
+    return 1;
+  }
+
+  if (valueB === null) {
+    return -1;
+  }
+
+  return null;
+}
+
+function sortDate(pointA, pointB) {
+  const weight = getWeightForNullValue(pointA.dateFrom, pointB.dateFrom);
+
+  return weight ?? dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+}
+
+function sortPrice(pointA, pointB) {
+  const weight = getWeightForNullValue(pointA.basePrice, pointB.basePrice);
+
+  return weight ?? pointB.basePrice - pointA.basePrice;
+}
+
+export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, updateItem, sortDate, sortPrice};
 
