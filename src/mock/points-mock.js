@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
-import {getRandomArrayElement} from '../utils.js';
-import {getRandomNumber} from '../utils.js';
+import {getRandomArrayElement} from '../utils/utils.js';
+import {getRandomNumber} from '../utils/utils.js';
 
 
 const mockDestinations = [
@@ -136,8 +136,8 @@ const mockOffers = [
 const mockPoints = [
   {
     basePrice: 100,
-    dateFrom: '2019-07-10T22:55:56.845Z',
-    dateTo: '2019-07-11T11:22:13.375Z',
+    dateFrom: '2022-01-10T22:55:56.845Z',
+    dateTo: '2022-01-11T11:22:13.375Z',
     destination: 1,
     id: '0',
     offers: [1, 2],
@@ -145,8 +145,8 @@ const mockPoints = [
   },
   {
     basePrice: 50,
-    dateFrom: '2019-07-10T22:55:56.845Z',
-    dateTo: '2019-07-11T11:22:13.375Z',
+    dateFrom: '2022-02-13T22:55:56.845Z',
+    dateTo: '2022-02-16T11:22:13.375Z',
     destination: 2,
     id: '1',
     offers: [1],
@@ -154,8 +154,8 @@ const mockPoints = [
   },
   {
     basePrice: 1100,
-    dateFrom: '2023-01-24T22:55:56.845Z',
-    dateTo: '2023-01-27T11:22:13.375Z',
+    dateFrom: '2022-03-24T22:55:56.845Z',
+    dateTo: '2022-03-27T11:22:13.375Z',
     destination: 3,
     id: '2',
     offers: [1, 2, 3],
@@ -163,8 +163,8 @@ const mockPoints = [
   },
   {
     basePrice: 500,
-    dateFrom: '2023-07-24T22:55:56.845Z',
-    dateTo: '2023-07-27T11:22:13.375Z',
+    dateFrom: '2023-04-24T22:55:56.845Z',
+    dateTo: '2023-04-27T11:22:13.375Z',
     destination: 4,
     id: '3',
     offers: [1, 2],
