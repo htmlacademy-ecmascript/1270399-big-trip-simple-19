@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {mockDestinations, mockOffers} from '../mock/points-mock.js';
-import {humanizePointDueFullDate} from '../utils.js';
+import {humanizePointDueFullDate} from '../utils/utils.js';
 
 function createFormEditTemplate(point) {
   const {basePrice, dateFrom, dateTo, destination, id, offers, type} = point;
