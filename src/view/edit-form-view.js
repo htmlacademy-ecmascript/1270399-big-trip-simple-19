@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {mockDestinations, mockOffers} from '../mock/points-mock.js';
 import {humanizePointDueFullDate} from '../utils/utils.js';
 
@@ -60,7 +60,7 @@ function createFormEditTemplate(point) {
           <label class="visually-hidden" for="event-start-time-${id}">From</label>
           <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${tripDateFrom}">
           &mdash;
-          <label class="visually-hidden" for="event-end-time-1">To</label>
+          <label class="visually-hidden" for="event-end-time-${id}">To</label>
           <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${tripDateTo}">
         </div>
         <div class="event__field-group  event__field-group--price">
@@ -93,31 +93,63 @@ function createFormEditTemplate(point) {
   );
 }
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends AbstractStatefulView {
   #handleFormSubmit = null;
-  #point = null;
-  handleFormClose = null;
+  #handleFormClose = null;
 
   constructor({point, onFormSubmit, onFormClose}) {
     super();
-    this.#point = point;
+    this._setState(EditFormView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
-    this.handleFormClose = onFormClose;
+    this.#handleFormClose = onFormClose;
 
-    this.element.querySelector('form').addEventListener('submit', this. #formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormClose);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createFormEditTemplate(this.#point);
+    return createFormEditTemplate(this._state);
+  }
+
+  reset(point) {
+    this.updateElement(
+      EditFormView.parsePointToState(point),
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('form').addEventListener('submit', this. #formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#destinationInputHandler);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
   };
 
-  #handleFormClose = () => {
-    this.handleFormClose();
+  #closeFormHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormClose();
   };
+
+  #typeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: evt.target.value
+    });
+  };
+
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    const findDestination = (name) => mockDestinations.find((destination) => destination.name === name);
+    this.updateElement({
+      destination: findDestination(evt.target.value)
+    });
+  };
+
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 }
