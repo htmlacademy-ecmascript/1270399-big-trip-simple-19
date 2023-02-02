@@ -1,5 +1,4 @@
 import {render, RenderPosition} from '../framework/render.js';
-import FormCreationView from '../view/create-form-view.js';
 import PointListView from '../view/point-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-points-view.js';
@@ -12,6 +11,7 @@ export default class TripListPresenter {
   #pointListContainer = null;
   #pointsModel = null;
   #sortComponent = null;
+  #createPointButton = null;
 
   #pointListComponent = new PointListView();
   #pointPresenter = new Map();
@@ -21,9 +21,10 @@ export default class TripListPresenter {
 
   #listPoints = [];
 
-  constructor({pointListContainer, pointsModel}) {
+  constructor({pointListContainer, pointsModel, createPointButton}) {
     this.#pointListContainer = pointListContainer;
     this.#pointsModel = pointsModel;
+    this.#createPointButton = createPointButton;
   }
 
   init() {
@@ -89,20 +90,21 @@ export default class TripListPresenter {
     if (this.#listPoints.every((point) => point === null)) {
       return;
     }
-    render(this.#sortComponent, this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#sortComponent, this.#pointListComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
   #renderNoPoints() {
     render(this.#noPointComponent, this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderFormCreationView() {
-    if (this.#listPoints.length === 0) {
-      this.#renderNoPoints();
-      return;
-    }
-
-    render(new FormCreationView(), this.#pointListComponent.element);
+  #renderFormCreationView(point) {
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
+      onCreationButtonClick: this.#createPointButton
+    });
+    pointPresenter.initCreatePoint(point);
   }
 
   #renderPointList() {
