@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
-import {getRandomArrayElement} from '../utils/utils.js';
-import {getRandomNumber} from '../utils/utils.js';
+import {getRandomArrayElement, getRandomNumber} from '../utils/utils.js';
 
 
 const mockDestinations = [
@@ -43,7 +42,7 @@ const mockDestinations = [
     name: 'Paris',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber(1000,9999)}`,
         description: 'Paris parliament building'
       }
     ]
@@ -139,7 +138,6 @@ const mockPoints = [
     dateFrom: '2022-01-10T22:55:56.845Z',
     dateTo: '2022-01-11T11:22:13.375Z',
     destination: 1,
-    id: '0',
     offers: [1, 2],
     type: 'bus'
   },
@@ -148,7 +146,6 @@ const mockPoints = [
     dateFrom: '2022-02-13T22:55:56.845Z',
     dateTo: '2022-02-16T11:22:13.375Z',
     destination: 2,
-    id: '1',
     offers: [1],
     type: 'taxi'
   },
@@ -157,7 +154,6 @@ const mockPoints = [
     dateFrom: '2022-03-24T22:55:56.845Z',
     dateTo: '2022-03-27T11:22:13.375Z',
     destination: 3,
-    id: '2',
     offers: [1, 2, 3],
     type: 'flight'
   },
@@ -166,7 +162,6 @@ const mockPoints = [
     dateFrom: '2023-04-24T22:55:56.845Z',
     dateTo: '2023-04-27T11:22:13.375Z',
     destination: 4,
-    id: '3',
     offers: [1, 2],
     type: 'ship'
   }
