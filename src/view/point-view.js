@@ -1,13 +1,12 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {mockDestinations, mockOffers} from '../mock/points-mock.js';
+import {mockDestinations} from '../mock/points-mock.js';
 import {humanizePointDueTime, humanizePointDueDate} from '../utils/utils.js';
 
-function createPointViewTemplate(point) {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = point;
+function createPointViewTemplate(pointView) {
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = pointView;
 
-  const pointTypeOffer = mockOffers.find((offer) => offer.type === type);
   const pointDestination = mockDestinations.find((item) => destination === item.id);
-  const offersChecked = pointTypeOffer.offers.filter((offer) => offers.includes(offer.id));
+  const offersChecked = offers.map((item) => item.id);
 
   const tripDateFrom = humanizePointDueDate(dateFrom);
   const tripTimeFrom = humanizePointDueTime(dateFrom);
@@ -19,7 +18,7 @@ function createPointViewTemplate(point) {
     <span class="event__offer-title">No additional offers</span>
     </li>`;
     } else {
-      const offersCheckedTemplate = offersChecked.map((offer) => `<li class="event__offer">
+      const offersCheckedTemplate = offers.map((offer) => `<li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>
@@ -34,7 +33,7 @@ function createPointViewTemplate(point) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${pointDestination.name}</h3>
+        <h3 class="event__title">${type} ${pointDestination ? pointDestination.name : ''}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateFrom}">${tripTimeFrom}</time>
@@ -58,22 +57,27 @@ function createPointViewTemplate(point) {
 }
 
 export default class PointView extends AbstractView {
-  #handleRollupClick = null;
-  #point = null;
+  #handleEditClick = null;
+  #pointView = null;
+  #offers = null;
+  #destination = null;
 
-  constructor({point, onRollupClick}) {
+  constructor(pointView) {
+    const {point, onRollupClick, offers, destination} = pointView;
     super();
-    this.#point = point;
-    this.#handleRollupClick = onRollupClick;
+    this.#pointView = point;
+    this.#handleEditClick = onRollupClick;
+    this.#offers = offers;
+    this.#destination = mockDestinations.find((item) => destination === item.id);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
 
   get template() {
-    return createPointViewTemplate(this.#point);
+    return createPointViewTemplate(this.#pointView);
   }
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleRollupClick();
+    this.#handleEditClick(this.#pointView, this.#offers, this.#destination);
   };
 }
