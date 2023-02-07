@@ -1,7 +1,7 @@
-import {render, replace, remove, RenderPosition} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import PointView from '../view/point-view.js';
-import CreateFormView from '../view/create-form-view.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -10,40 +10,48 @@ const Mode = {
 
 export default class PointPresenter {
   #pointListContainer = null;
-  #handleDataChange = null;
-  #handleModeChange = null;
 
   #pointComponent = null;
   #pointEditComponent = null;
-  #createPointComponent = null;
-  #handleCreationButtonClick = null;
+
+  #handleDataChange = null;
+  #handleModeChange = null;
 
   #point = null;
+  #offers = null;
+  #destination = null;
+
   #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer, onDataChange, onModeChange, onCreationButtonClick}) {
+  constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#handleCreationButtonClick = onCreationButtonClick;
   }
 
   init(point) {
+    const {offers, destination} = point;
     this.#point = point;
+    this.#offers = offers;
+    this.#destination = destination;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
-    const prevCreatePointComponent = this.#createPointComponent;
 
     this.#pointComponent = new PointView({
       point: this.#point,
+      offers: this.#offers,
+      destination: this.#destination,
       onRollupClick: this.#handleEditClick
     });
 
     this.#pointEditComponent = new EditFormView({
       point: this.#point,
+      offers: this.#offers,
+      destination: this.#destination,
       onFormSubmit: this.#handleFormSubmit,
-      onFormClose: this.#handleCloseClick
+      onFormClose: this.#handleCloseClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -61,19 +69,6 @@ export default class PointPresenter {
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
-    remove(prevCreatePointComponent);
-  }
-
-  initCreatePoint(point) {
-    this.#handleCreationButtonClick.addEventListener('click', () => {
-      this.#createPointComponent = new CreateFormView({
-        point: point,
-        onCloseClick: this.#handleCloseNewPoint,
-        onFormSubmit: this.#handleNewPointFormSubmit,
-      });
-      render(this.#createPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
-      document.addEventListener('keydown', this.#escKeyDownHandler);
-    });
   }
 
   destroy() {
@@ -111,24 +106,29 @@ export default class PointPresenter {
 
   #handleEditClick = () => {
     this.#replacePointToEdit();
-    this.#pointEditComponent.reset(this.#point);
   };
 
-  #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+  #handleCloseClick = () => {
+    this.#replaceEditToPoint();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleFormSubmit = (point, offers, destination) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+      offers,
+      destination
+    );
     this.#replaceEditToPoint();
   };
 
-  #handleNewPointFormSubmit = (point) => {
-    this.#handleDataChange(point);
-    this.#handleCloseNewPoint();
-  };
-
-  #handleCloseClick = () =>{
-    this.#replaceEditToPoint();
-  };
-
-  #handleCloseNewPoint = () => {
-    this.#createPointComponent.element.remove();
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }

@@ -34,10 +34,6 @@ const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.dateFrom)),
 };
 
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
-
 function getWeightForNullValue(valueA, valueB) {
   if (valueA === null && valueB === null) {
     return 0;
@@ -66,5 +62,5 @@ function sortPrice(pointA, pointB) {
   return weight ?? pointB.basePrice - pointA.basePrice;
 }
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, updateItem, sortDate, sortPrice};
+export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, sortDate, sortPrice};
 
