@@ -138,7 +138,18 @@ const mockPoints = [
     dateFrom: '2022-01-10T22:55:56.845Z',
     dateTo: '2022-01-11T11:22:13.375Z',
     destination: 1,
-    offers: [1, 2],
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      }
+    ],
     type: 'bus'
   },
   {
@@ -146,7 +157,18 @@ const mockPoints = [
     dateFrom: '2022-02-13T22:55:56.845Z',
     dateTo: '2022-02-16T11:22:13.375Z',
     destination: 2,
-    offers: [1],
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+    ],
     type: 'taxi'
   },
   {
@@ -154,7 +176,23 @@ const mockPoints = [
     dateFrom: '2022-03-24T22:55:56.845Z',
     dateTo: '2022-03-27T11:22:13.375Z',
     destination: 3,
-    offers: [1, 2, 3],
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+      {
+        id: 3,
+        title: 'Add meal',
+        price: 15
+      }
+    ],
     type: 'flight'
   },
   {
@@ -162,7 +200,23 @@ const mockPoints = [
     dateFrom: '2023-04-24T22:55:56.845Z',
     dateTo: '2023-04-27T11:22:13.375Z',
     destination: 4,
-    offers: [1, 2],
+    offers: [
+      {
+        id: 1,
+        title: 'Upgrade to a business class',
+        price: 120
+      },
+      {
+        id: 2,
+        title: 'Add luggage',
+        price: 30
+      },
+      {
+        id: 3,
+        title: 'Add meal',
+        price: 15
+      }
+    ],
     type: 'ship'
   }
 ];

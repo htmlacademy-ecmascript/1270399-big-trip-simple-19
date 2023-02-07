@@ -71,7 +71,7 @@ function createFormCreationTemplate(point) {
           <label class="event__label  event__type-output" for="event-destination-${id}">
           ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-${id}">
+          <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${pointDestination /**/}" list="destination-list-${id}">
           <datalist id="destination-list-${id}">
           ${destantionTemplate}
           </datalist>
@@ -105,7 +105,7 @@ function createFormCreationTemplate(point) {
       </section>
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${pointDestination.description}</p>
+          <p class="event__destination-description">${pointDestination /**/}</p>
           <div class="event__photos-container">
           <div class="event__photos-tape">
             <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
@@ -125,13 +125,15 @@ function createFormCreationTemplate(point) {
 export default class CreateFormView extends AbstractStatefulView {
   #handleClickClose = null;
   #handleFormSubmit = null;
+  #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, onCloseClick, onFormSubmit}) {
+  constructor({point = BLANK_POINT, onCloseClick, onFormSubmit, onDeleteClick}) {
     super();
     this._setState(point);
 
     this.#handleClickClose = onCloseClick;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -145,16 +147,22 @@ export default class CreateFormView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#destinationInputHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this._state);
+    this.#handleFormSubmit(CreateFormView.parseStateToPoint(this._state));
   };
 
   #closeFormHandler = (evt) => {
     evt.preventDefault();
     this.#handleClickClose();
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(CreateFormView.parseStateToPoint(this._state));
   };
 
   #typeChangeHandler = (evt) => {
@@ -172,4 +180,8 @@ export default class CreateFormView extends AbstractStatefulView {
       destination: findDestination(evt.target.value)
     });
   };
+
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 }
