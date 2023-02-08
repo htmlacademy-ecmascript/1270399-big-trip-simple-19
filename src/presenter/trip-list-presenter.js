@@ -6,37 +6,59 @@ import PointPresenter from './point-presenter.js';
 import CreateFormPresenter from './create-form-presenter.js';
 import {sortDate, sortPrice, filter} from '../utils/utils.js';
 import {SortType, FilterType, UpdateType, UserAction} from '../const.js';
+import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import ErrorLoadingView from '../view/error-loading-view.js';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class TripListPresenter {
-  #pointListContainer = null;
+  #pointsListContainer = null;
+  #sortContainer = null;
+
   #pointsModel = null;
   #filterModel = null;
+  #pointCommonModel = null;
+
+  #pointCommon = null;
+
   #sortComponent = null;
   #noPointComponent = null;
-  #createFormPresenter = null;
-  #onCreateFormDestroy = null;
-
   #pointListComponent = new PointListView();
+  #loadingComponent = new LoadingView();
+
+  #createFormPresenter = null;
   #pointPresenter = new Map();
+
+  #onCreateFormDestroy = null;
+  #isPointLoading = true;
+  #isPointCommonLoading = true;
+  #isErrorLoading = false;
+
+  #errorLoadingView = new ErrorLoadingView();
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
-  constructor({pointListContainer, pointsModel, filterModel, onCreateFormDestroy}) {
-    this.#pointListContainer = pointListContainer;
+  constructor({pointsListContainer, sortContainer, pointsModel, filterModel, pointCommonModel, onCreateFormDestroy}) {
+    this.#pointsListContainer = pointsListContainer;
+    this.#sortContainer = sortContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#pointCommonModel = pointCommonModel;
     this.#onCreateFormDestroy = onCreateFormDestroy;
-
-    this.#createFormPresenter = new CreateFormPresenter({
-      pointListContainer: this.#pointListComponent.element,
-      onDataChange: this.#handleViewAction,
-      onDestroy: this.#onCreateFormDestroy,
-    });
+    this.#pointCommon = this.#pointCommonModel.pointCommon;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#pointCommonModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -46,9 +68,11 @@ export default class TripListPresenter {
 
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return filteredPoints.sort(sortDate);
+        filteredPoints.sort(sortDate);
+        break;
       case SortType.PRICE:
-        return filteredPoints.sort(sortPrice);
+        filteredPoints.sort(sortPrice);
+        break;
     }
 
     return filteredPoints;
@@ -57,6 +81,7 @@ export default class TripListPresenter {
   init() {
     this.#renderPointList();
     this.#renderSort();
+    this.#clearPointList();
   }
 
   createForm() {
@@ -65,46 +90,87 @@ export default class TripListPresenter {
     this.#createFormPresenter.init();
   }
 
+  #createNewPointPresenter () {
+    this.#createFormPresenter = new CreateFormPresenter({
+      formContainer: this.#pointListComponent.element,
+      pointCommon: this.#pointCommon,
+      onDataChange: this.#handleViewAction,
+      onDestroy: this.#onCreateFormDestroy,
+    });
+  }
+
   #handleModeChange = () => {
     this.#createFormPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#createFormPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#createFormPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
-    //console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this.#clearPointList();
         this.#renderPointList();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
-        this.#clearPointList({resetSortType: true, /**/});
+        this.#clearPointList({ resetSortType: true });
         this.#renderPointList();
         break;
+      case UpdateType.INIT_POINT:
+        this.#isPointLoading = false;
+        break;
+      case UpdateType.INIT_POINT_COMMON:
+        this.#pointCommon = this.#pointCommonModel.pointCommon;
+        this.#isPointCommonLoading = false;
+        break;
+      case UpdateType.ERROR_LOADING:
+        this.#isErrorLoading = true;
+        remove(this.#loadingComponent);
+        this.#clearPointList();
+        this.#renderPointList();
+        break;
+    }
+    if ((updateType === UpdateType.INIT_POINT ||
+      updateType === UpdateType.INIT_POINT_COMMON) &&
+      (!this.#isPointLoading && !this.#isPointCommonLoading)) {
+      this.#createNewPointPresenter();
+      remove(this.#loadingComponent);
+      this.#clearPointList();
+      this.#renderPointList();
     }
   };
 
@@ -121,25 +187,26 @@ export default class TripListPresenter {
   #renderSort() {
     this.#sortComponent = new SortView({
       onSortTypeChange: this.#handleSortTypeChange,
-      currentSortType: this.#currentSortType //
+      currentSortType: this.#currentSortType
     });
 
-    render(this.#sortComponent, this.#pointListComponent.element, RenderPosition.BEFOREBEGIN);
+    render(this.#sortComponent, this.#sortContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      pointListContainer: this.#pointListComponent.element,
-      onDataChange: this.#handleModeChange,
-      onModeChange: this.#handleViewAction
+      pointContainer: this.#pointListComponent.element,
+      pointCommon: this.#pointCommon,
+      onModeChange: this.#handleModeChange,
+      onDataChange: this.#handleViewAction
     });
 
     pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 
-  #renderPoints() {
-    this.points.forEach((point) => this.#renderPoint(point));
+  #renderPoints(points) {
+    points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderNoPoints() {
@@ -151,11 +218,15 @@ export default class TripListPresenter {
   }
 
   #clearPointList({resetSortType = false} = {}) {
+    if(this.#createFormPresenter){
+      this.#createFormPresenter.destroy();
+    }
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
-    this.#createFormPresenter.destroy();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
+
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -166,15 +237,28 @@ export default class TripListPresenter {
     }
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#pointsListContainer);
+  }
+
+  #renderErrorLoading() {
+    render(this.#errorLoadingView, this.#pointsListContainer);
+  }
+
   #renderPointList() {
+    if (this.#isErrorLoading) {
+      this.#renderErrorLoading();
+    }
+    if ((this.#isPointLoading || this.#isPointCommonLoading) && !this.#isErrorLoading) {
+      this.#renderLoading();
+    }
     const points = this.points;
-    if (points.length === 0) {
+    const pointsCount = this.points.length;
+    if (pointsCount === 0 && !this.#isPointLoading) {
       this.#renderNoPoints();
     }
     this.#renderSort();
-    render(this.#pointListComponent, this.#pointListContainer);
+    render(this.#pointListComponent, this.#pointsListContainer);
     this.#renderPoints(points);
-
   }
-
 }
