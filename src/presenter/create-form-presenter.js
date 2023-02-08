@@ -1,28 +1,20 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
-import {UserAction, UpdateType, TYPES} from '../const.js';
-
-const BLANK_POINT = {
-  basePrice: 0,
-  dateFrom: '',
-  dateTo: '',
-  destination: -1,
-  id: 0,
-  offers: [],
-  type: TYPES[0]
-};
+import {UserAction, UpdateType} from '../const.js';
 
 export default class CreateFormPresenter {
-  #pointListContainer = null;
+  #formContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
 
   #pointEditComponent = null;
+  #pointCommon = null;
 
-  constructor({pointListContainer, onDataChange, onDestroy}) {
-    this.#pointListContainer = pointListContainer;
+  constructor({formContainer, onDataChange, onDestroy, pointCommon}) {
+    this.#formContainer = formContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#pointCommon = pointCommon;
   }
 
   init() {
@@ -33,10 +25,10 @@ export default class CreateFormPresenter {
     this.#pointEditComponent = new EditFormView({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
-      point: BLANK_POINT
+      pointCommon: this.#pointCommon
     });
 
-    render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+    render(this.#pointEditComponent, this.#formContainer, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
@@ -52,6 +44,25 @@ export default class CreateFormPresenter {
     this.#pointEditComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   }
 
   #handleFormSubmit = (point) => {

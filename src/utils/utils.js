@@ -17,14 +17,6 @@ function humanizePointDueFullDate(dueDate) {
   return dueDate ? dayjs(dueDate).format(FULL_DATE_FORMAT) : '';
 }
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomNumber(min, max) {
-  return Math.round(Math.random() * (max - min) + min);
-}
-
 function isPointFuture(dateFrom) {
   return dateFrom && (dayjs().isSame(dateFrom, 'D') || dayjs().isBefore(dateFrom, 'D'));
 }
@@ -62,5 +54,5 @@ function sortPrice(pointA, pointB) {
   return weight ?? pointB.basePrice - pointA.basePrice;
 }
 
-export {getRandomArrayElement, getRandomNumber, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, sortDate, sortPrice};
+export {humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, sortDate, sortPrice};
 
