@@ -4,17 +4,33 @@ import PointsModel from './model/points-model.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import FilterModel from './model/filter-model.js';
+import PointsApiService from './points-api-service.js';
+import PointCommonApiService from './point-common-api-service.js';
+import PointCommonModel from './model/point-common-model.js';
+
+const AUTHORIZATION = 'Basic 234erw3rw3423e2';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
+
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
+
+const pointCommonModel = new PointCommonModel({
+  pointCommonApiService: new PointCommonApiService(END_POINT, AUTHORIZATION)
+});
 
 const siteHeaderElement = document.querySelector('.trip-controls__filters');
-const siteMainElement = document.querySelector('.trip-events');
-const tripMainElement = document.querySelector('.trip-main');
+const tripMainElement = document.querySelector('.main__control');
+const tripEventsContentElement = document.querySelector('.trip-events__content');
+const tripEventsSortElement = document.querySelector('.trip-events__sort');
 
-const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 
 const tripListPresenter = new TripListPresenter({
-  pointListContainer: siteMainElement,
+  pointsListContainer: tripEventsContentElement,
+  sortContainer: tripEventsSortElement,
   pointsModel,
+  pointCommonModel,
   filterModel,
   onCreateFormDestroy: handleCreatePointFormClose,
 });
@@ -22,7 +38,7 @@ const tripListPresenter = new TripListPresenter({
 const filterPresenter = new FilterPresenter({
   filterContainer: siteHeaderElement,
   filterModel,
-  pointsModel: pointsModel
+  pointsModel
 });
 
 const createPointButtonComponent = new NewPointButtonView({
@@ -38,7 +54,12 @@ function handleCreatePointFormClose() {
   createPointButtonComponent.element.disabled = false;
 }
 
-render(createPointButtonComponent, tripMainElement);
-
 filterPresenter.init();
 tripListPresenter.init();
+
+Promise.all([
+  pointsModel.init(),
+  pointCommonModel.init()])
+  .then(() => {
+    render(createPointButtonComponent, tripMainElement);
+  });

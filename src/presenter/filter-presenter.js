@@ -21,7 +21,7 @@ export default class FilterPresenter {
 
   get filters() {
     const points = this.#pointsModel.points;
-    //
+
     return [
       {
         type: FilterType.EVERYTHING,
