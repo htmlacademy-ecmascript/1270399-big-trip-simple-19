@@ -1,12 +1,11 @@
 import dayjs from 'dayjs';
-import {FilterType} from '../const.js';
 
-const TIME_FORNAT = 'HH:mm';
+const TIME_FORMAT = 'HH:mm';
 const DATE_FORMAT = 'MMM DD';
 const FULL_DATE_FORMAT = 'DD/MM/YY HH:mm';
 
 function humanizePointDueTime(dueDate) {
-  return dueDate ? dayjs(dueDate).format(TIME_FORNAT) : '';
+  return dueDate ? dayjs(dueDate).format(TIME_FORMAT) : '';
 }
 
 function humanizePointDueDate(dueDate) {
@@ -17,42 +16,40 @@ function humanizePointDueFullDate(dueDate) {
   return dueDate ? dayjs(dueDate).format(FULL_DATE_FORMAT) : '';
 }
 
-function isPointFuture(dateFrom) {
-  return dateFrom && (dayjs().isSame(dateFrom, 'D') || dayjs().isBefore(dateFrom, 'D'));
-}
+const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
 
-const filter = {
-  [FilterType.EVERYTHING]: (points) => points,
-  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.dateFrom)),
-};
-
-function getWeightForNullValue(valueA, valueB) {
-  if (valueA === null && valueB === null) {
+function getWeightForNullDate(dateA, dateB) {
+  if (dateA === null && dateB === null) {
     return 0;
   }
 
-  if (valueA === null) {
+  if (dateA === null) {
     return 1;
   }
 
-  if (valueB === null) {
+  if (dateB === null) {
     return -1;
   }
 
   return null;
 }
 
-function sortDate(pointA, pointB) {
-  const weight = getWeightForNullValue(pointA.dateFrom, pointB.dateFrom);
+function sortDay(pointA, pointB) {
+  const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
 
   return weight ?? dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 }
 
 function sortPrice(pointA, pointB) {
-  const weight = getWeightForNullValue(pointA.basePrice, pointB.basePrice);
+  const weight = getWeightForNullDate(pointA.basePrice, pointB.basePrice);
 
   return weight ?? pointB.basePrice - pointA.basePrice;
 }
 
-export {humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, filter, sortDate, sortPrice};
+const firstLetterUp = (item) => {
+  if (!item) {
+    return item;}
+  return item[0].toUpperCase() + item.slice(1);
+};
 
+export {getRandomArrayElement, humanizePointDueTime, humanizePointDueDate, humanizePointDueFullDate, sortDay, sortPrice, firstLetterUp};
